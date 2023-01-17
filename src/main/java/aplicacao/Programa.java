@@ -1,44 +1,41 @@
 package aplicacao;
 
+import dominio.Pessoa;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import dominio.Pessoa;
-
 public class Programa {
 
-	public static void main(String[] args) {
-		
-		System.out.println("==================================================================");
-		
-		Pessoa p1 = new Pessoa(null, "Watilla Junior", "Watilla@gmail.com");
-		Pessoa p2 = new Pessoa(null, "Juliana rodriges", "Juliana@gmail.com");
-		Pessoa p3 = new Pessoa(null, "jasmim silva", "jasmim@gmail.com");
-		
-		//Com essa linha de codigo aki agente stancia apropiadamente o 
-		//EntityManagerFactory com as configuraçoes que estao no "Persistence.xml"
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("exemplo-jpa");
-		
-		//Com essa estanciaçao automaticamente eu ja vou ter uma conecçao com o banco de dados 
-		//e toda aquela historia de contexto de persistencia ja implementada
-		EntityManager em = emf.createEntityManager();
-		
-		
-		//Para enserir essas pessoas eu tenho que chamar (em.persist();) ele que pega o objeto e salva no banco de dados
-		//aki da para perceber o tanto que e simples fazer um acesso a dados usando uma ferramenta de mapiamento a objeto relacional
-		//com uma unica linha eu consigo persistir um objeto para uma linha na tabela do banco de dados 
-		em.getTransaction().begin();
-		em.persist(p1);
-		em.persist(p2);
-		em.persist(p3);
-		em.getTransaction().commit();
-		
-		
-		System.out.println("Pronto! ");
-		
-		
-		System.out.println("==================================================================");
-	}
+  public static void main(String[] args) {
+    System.out.println("================================================");
 
+    //Com essa linha de codigo aki agente stancia apropiadamente o
+    //EntityManagerFactory com as configuraçoes que estao no "Persistence.xml"
+    EntityManagerFactory emf = Persistence.createEntityManagerFactory(
+      "exemplo-jpa"
+    );
+
+    //Com essa estanciaçao automaticamente eu ja vou ter uma conecçao com o banco de dados
+    //e toda aquela historia de contexto de persistencia ja implementada
+    EntityManager em = emf.createEntityManager();
+
+    //aki agora eu vou buscar uma pessoa no banco de dados
+    //perceba que para buscar basta uma unica linha agente consegue fazer a pesquisa no banco de dados
+    //converter esse dado para um objeto e instancia o objeto... o jpa facilita muito o asseso a dados para a gente
+    Pessoa p = em.find(Pessoa.class, 5);
+
+    //Vamos supor que eu queira apagar uma pessoa no banco de dados
+    //Para apagar uma pessoa no banco de dados eu tenho que chamar "em.remove();"
+    em.getTransaction().begin();
+    //Sempre que e uma opreçao que nao seja uma simples consulta tem que colocar a trasaçao
+    em.remove(p);
+    em.getTransaction().commit();
+
+    System.out.println("Pronto! ");
+
+    System.out.println("===================================================");
+    em.close();
+    emf.close();
+  }
 }
